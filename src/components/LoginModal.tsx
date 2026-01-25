@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { AxiosError } from 'axios';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -24,8 +25,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
     try {
       await login(email, password);
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.error || 'Error al iniciar sesión');
+      } else {
+        setError('Error al iniciar sesión');
+      }
     } finally {
       setLoading(false);
     }

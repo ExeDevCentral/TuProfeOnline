@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { AxiosError } from 'axios';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -38,8 +39,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
     try {
       await register(email, password, name, role);
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.response?.data?.errors?.[0]?.msg || 'Error al registrarse');
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(err.response?.data?.error || err.response?.data?.errors?.[0]?.msg || 'Error al registrarse');
+      } else {
+        setError('Error al registrarse');
+      }
     } finally {
       setLoading(false);
     }
@@ -121,7 +126,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as 'STUDENT' | 'TEACHER' | 'ADMIN')}
-                className="premium-input"
+                className={`premium-input ${role === 'TEACHER' ? 'border-yellow-500 bg-yellow-500/20 text-yellow-100' : role === 'ADMIN' ? 'border-red-500 bg-red-500/20 text-red-100' : ''}`}
               >
                 <option value="STUDENT">Estudiante</option>
                 <option value="TEACHER">Profesor</option>

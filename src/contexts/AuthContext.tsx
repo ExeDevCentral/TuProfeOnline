@@ -15,35 +15,32 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth data
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const init = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-
-      // Verify token is still valid
-      authService.getCurrentUser()
-        .then((currentUser) => {
+      if (storedToken && storedUser) {
+        try {
+          const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
-        })
-        .catch(() => {
-          // Token invalid, clear storage
+        } catch {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setToken(null);
           setUser(null);
-        })
-        .finally(() => setLoading(false));
-    } else {
+        }
+      }
       setLoading(false);
-    }
+    };
+    init();
   }, []);
 
   const login = async (email: string, password: string) => {

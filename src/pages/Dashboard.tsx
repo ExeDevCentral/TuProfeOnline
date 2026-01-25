@@ -13,7 +13,8 @@ import {
     Clock,
     User,
     Play,
-    Lock
+    Upload,
+    BookOpen
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,10 +25,11 @@ import type { Course } from '../services/courseService';
 import VideoBackground from '../components/VideoBackground';
 import { useTheme } from '../contexts/ThemeContext';
 import { authService } from '../services/authService';
+import { AxiosError } from 'axios';
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
-    const { user, logout, login } = useAuth(); // Assuming login updates user state ref
+    const { user, logout } = useAuth(); // Assuming login updates user state ref
     const { theme, setTheme } = useTheme();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [classes, setClasses] = useState<Class[]>([]);
@@ -36,6 +38,7 @@ const Dashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     // Settings State
     const [selectedTimezone, setSelectedTimezone] = useState(user?.timezone || 'UTC');
@@ -46,7 +49,7 @@ const Dashboard: React.FC = () => {
         return () => clearInterval(timer);
     }, []);
 
-    const handleThemeChange = async (newTheme: 'student-blue' | 'teacher-black' | 'profile-white' | 'lilac-premium') => {
+    const handleThemeChange = async (newTheme: 'student-blue' | 'teacher-black' | 'lilac-premium') => {
         setTheme(newTheme);
         if (user) {
             try {
@@ -69,6 +72,49 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setAvatarFile(file);
+        }
+    };
+
+    const handleUploadAvatar = async () => {
+        if (!avatarFile || !user) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64 = e.target?.result as string;
+            try {
+                await authService.updateProfile({ avatar: base64 });
+                window.location.reload();
+            } catch (e) {
+                console.error("Failed to upload avatar", e);
+            }
+        };
+        reader.readAsDataURL(avatarFile);
+    };
+
+    const calculateStudyTime = (createdAt: string) => {
+        const created = new Date(createdAt);
+        const now = new Date();
+        const diffMs = now.getTime() - created.getTime();
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffWeeks = Math.floor(diffDays / 7);
+        const diffMonths = Math.floor(diffDays / 30);
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+        if (diffMonths > 0) {
+            return `${diffMonths} mes${diffMonths > 1 ? 'es' : ''}`;
+        } else if (diffWeeks > 0) {
+            return `${diffWeeks} semana${diffWeeks > 1 ? 's' : ''}`;
+        } else if (diffDays > 0) {
+            return `${diffDays} día${diffDays > 1 ? 's' : ''}`;
+        } else {
+            return `${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+        }
+    };
+
 
     useEffect(() => {
         if (activeTab === 'dashboard' || activeTab === 'classes') {
@@ -84,9 +130,13 @@ const Dashboard: React.FC = () => {
             setError(null);
             const classesData = await classService.getClasses();
             setClasses(classesData);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error loading classes:', err);
-            setError(err.response?.data?.error || 'Error al cargar las clases');
+            if (err instanceof AxiosError) {
+                setError(err.response?.data?.error || 'Error al cargar las clases');
+            } else {
+                setError('Error al cargar las clases');
+            }
         } finally {
             setLoading(false);
         }
@@ -102,9 +152,13 @@ const Dashboard: React.FC = () => {
             ]);
             setMyCourses(myCoursesData);
             setPublishedCourses(publishedCoursesData);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error loading courses:', err);
-            setError(err.response?.data?.error || 'Error al cargar los cursos');
+            if (err instanceof AxiosError) {
+                setError(err.response?.data?.error || 'Error al cargar los cursos');
+            } else {
+                setError('Error al cargar los cursos');
+            }
         } finally {
             setLoading(false);
         }
@@ -179,6 +233,7 @@ const Dashboard: React.FC = () => {
                         { id: 'calendar', icon: CalendarIcon, label: 'Calendario' },
                         { id: 'classes', icon: Video, label: 'Mis Clases' },
                         { id: 'courses', icon: Play, label: 'Cursos Udemy' }, // New Tab
+                        { id: 'flashcards', icon: BookOpen, label: 'Flashcards' },
                         { id: 'messages', icon: Mail, label: 'Mensajes' },
                     ].map((item) => (
                         <button
@@ -221,6 +276,8 @@ const Dashboard: React.FC = () => {
                             {activeTab === 'dashboard' && getGreeting()}
                             {activeTab === 'calendar' && 'Mi Calendario Escolar'}
                             {activeTab === 'classes' && 'Mis Clases Virtuales'}
+                            {activeTab === 'courses' && 'Cursos Udemy'}
+                            {activeTab === 'flashcards' && 'Mis Flashcards'}
                             {activeTab === 'messages' && 'Bandeja de Entrada'}
                             {activeTab === 'settings' && 'Configuración'}
                         </h1>
@@ -228,6 +285,8 @@ const Dashboard: React.FC = () => {
                             {activeTab === 'dashboard' && 'Aquí tienes el resumen de tus clases de hoy.'}
                             {activeTab === 'calendar' && 'Organiza tus horarios y entregas.'}
                             {activeTab === 'classes' && 'Accede a tus clases grabadas y en vivo.'}
+                            {activeTab === 'courses' && 'Explora y inscríbete en cursos profesionales.'}
+                            {activeTab === 'flashcards' && 'Crea y estudia con tarjetas de memoria.'}
                             {activeTab === 'messages' && 'Mantente al día con tus avisos y citaciones.'}
                             {activeTab === 'settings' && 'Gestiona tu cuenta y preferencias.'}
                         </p>
@@ -389,17 +448,20 @@ const Dashboard: React.FC = () => {
                                     <User size={18} className="text-primary-400" /> Mi Perfil
                                 </h3>
                                 <div className="space-y-2 text-sm">
-                                    <p className="text-white/70">
-                                        <span className="text-white font-medium">Nombre:</span> {user?.name}
+                                    <p className="text-current">
+                                        <span className="text-current font-medium">Nombre:</span> {user?.name}
                                     </p>
-                                    <p className="text-white/70">
-                                        <span className="text-white font-medium">Email:</span> {user?.email}
+                                    <p className="text-current">
+                                        <span className="text-current font-medium">Email:</span> {user?.email}
                                     </p>
-                                    <p className="text-white/70">
-                                        <span className="text-white font-medium">Rol:</span> {
+                                    <p className="text-current">
+                                        <span className="text-current font-medium">Rol:</span> {
                                             user?.role === 'STUDENT' ? 'Estudiante' :
                                                 user?.role === 'TEACHER' ? 'Profesor' : 'Administrador'
                                         }
+                                    </p>
+                                    <p className="text-white/70">
+                                        <span className="text-white font-medium">Tiempo estudiando:</span> {user?.createdAt ? calculateStudyTime(user.createdAt) : 'N/A'}
                                     </p>
                                 </div>
                             </section>
@@ -620,6 +682,90 @@ const Dashboard: React.FC = () => {
                     </div>
                 )}
 
+                {activeTab === 'flashcards' && (
+                    <div className="space-y-8">
+                        {/* Quick Actions */}
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h2 className="text-2xl font-bold mb-2">Mis Mazos de Flashcards</h2>
+                                <p className="text-white/60">Crea y estudia con tarjetas de memoria para mejorar tu aprendizaje</p>
+                            </div>
+                            <button
+                                onClick={() => navigate('/flashcards')}
+                                className="premium-button flex items-center gap-2"
+                            >
+                                <BookOpen size={20} />
+                                Ver Todos
+                            </button>
+                        </div>
+
+                        {/* My Decks Preview */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Sample deck cards - in a real implementation, this would load from the API */}
+                            <div className="glass-card p-6 hover:scale-105 transition-transform cursor-pointer"
+                                 onClick={() => navigate('/flashcards')}>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 className="text-xl font-semibold mb-2">Matemáticas Básicas</h3>
+                                        <p className="text-white/60 text-sm">Álgebra y geometría fundamental</p>
+                                    </div>
+                                    <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white/50">25 tarjetas</span>
+                                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm">
+                                        Estudiar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="glass-card p-6 hover:scale-105 transition-transform cursor-pointer"
+                                 onClick={() => navigate('/flashcards')}>
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 className="text-xl font-semibold mb-2">Historia Universal</h3>
+                                        <p className="text-white/60 text-sm">Eventos y figuras históricas</p>
+                                    </div>
+                                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white/50">42 tarjetas</span>
+                                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm">
+                                        Estudiar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="glass-card p-6 border-2 border-dashed border-white/20 hover:border-primary-400 transition-colors cursor-pointer"
+                                 onClick={() => navigate('/flashcards')}>
+                                <div className="flex flex-col items-center justify-center h-full py-8">
+                                    <Plus size={48} className="text-white/30 mb-4" />
+                                    <h3 className="text-lg font-semibold mb-2">Crear Nuevo Mazo</h3>
+                                    <p className="text-white/50 text-center text-sm">
+                                        Organiza tus tarjetas por temas
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Study Stats */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="glass-card p-6 text-center">
+                                <div className="text-3xl font-bold text-primary-400 mb-2">0</div>
+                                <div className="text-white/60">Tarjetas estudiadas hoy</div>
+                            </div>
+                            <div className="glass-card p-6 text-center">
+                                <div className="text-3xl font-bold text-green-400 mb-2">0</div>
+                                <div className="text-white/60">Minutos estudiados</div>
+                            </div>
+                            <div className="glass-card p-6 text-center">
+                                <div className="text-3xl font-bold text-yellow-400 mb-2">0</div>
+                                <div className="text-white/60">Racha de días</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {activeTab === 'settings' && (
                     <div className="glass-card p-8 max-w-4xl">
                         <h2 className="text-2xl font-bold mb-6">Configuración</h2>
@@ -632,7 +778,7 @@ const Dashboard: React.FC = () => {
                                 </h3>
 
                                 <div className="space-y-4">
-                                    <label className="block text-sm text-white/70">Tema de la Interfaz</label>
+                                    <label className="block text-sm text-current">Tema de la Interfaz</label>
                                     <div className="grid grid-cols-2 gap-3">
                                         <button
                                             onClick={() => handleThemeChange('student-blue')}
@@ -640,13 +786,6 @@ const Dashboard: React.FC = () => {
                                         >
                                             <div className="w-4 h-4 rounded-full bg-[#0f172a] border border-white"></div>
                                             Estudiante Blue
-                                        </button>
-                                        <button
-                                            onClick={() => handleThemeChange('profile-white')}
-                                            className={`p-3 rounded-xl border flex items-center gap-2 ${theme === 'profile-white' ? 'border-primary-500 bg-primary-500/20' : 'border-white/10 hover:bg-white/5'}`}
-                                        >
-                                            <div className="w-4 h-4 rounded-full bg-slate-100 border border-gray-400"></div>
-                                            Perfil Claro
                                         </button>
                                         <button
                                             onClick={() => handleThemeChange('lilac-premium')}
@@ -668,7 +807,7 @@ const Dashboard: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <label className="block text-sm text-white/70">Logo / Avatar</label>
+                                    <label className="block text-sm text-current">Logo / Avatar</label>
                                     <div className="flex gap-4">
                                         {['https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
                                             'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka',
@@ -683,6 +822,30 @@ const Dashboard: React.FC = () => {
                                                 onClick={() => handleAvatarChange(url)}
                                             />
                                         ))}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                            id="avatar-upload"
+                                        />
+                                        <label
+                                            htmlFor="avatar-upload"
+                                            className="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-white/10 transition-colors text-sm"
+                                        >
+                                            <Upload size={16} />
+                                            Sube tu avatar
+                                        </label>
+                                        {avatarFile && (
+                                            <button
+                                                onClick={handleUploadAvatar}
+                                                className="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm"
+                                            >
+                                                Subir
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </section>
@@ -712,7 +875,7 @@ const Dashboard: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm text-white/70 mb-1">Tu Zona Horaria</label>
+                                    <label className="block text-sm text-current mb-1">Tu Zona Horaria</label>
                                     <select
                                         className="premium-input bg-[#0f172a]"
                                         value={selectedTimezone}

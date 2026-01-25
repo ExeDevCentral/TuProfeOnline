@@ -18,7 +18,7 @@ export interface Class {
   room?: string;
   createdAt: string;
   updatedAt: string;
-  enrollments?: any[];
+  enrollments?: unknown[];
 }
 
 export interface CreateClassData {
@@ -51,7 +51,7 @@ export const classService = {
     return response.data;
   },
 
-  async enrollInClass(id: string): Promise<any> {
+  async enrollInClass(id: string): Promise<unknown> {
     const response = await api.post(`/classes/${id}/enroll`);
     return response.data;
   },

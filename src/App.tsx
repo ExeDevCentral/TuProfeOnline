@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import CoursePlayer from './pages/CoursePlayer';
+import Flashcards from './pages/Flashcards';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -43,6 +44,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <CoursePlayer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/flashcards"
+                element={
+                  <ProtectedRoute>
+                    <Flashcards />
                   </ProtectedRoute>
                 }
               />

@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 
-type Theme = 'student-blue' | 'teacher-black' | 'profile-white' | 'lilac-premium';
+type Theme = 'student-blue' | 'teacher-black' | 'lilac-premium';
+
+const validThemes: Theme[] = ['student-blue', 'teacher-black', 'lilac-premium'];
 
 interface ThemeContextType {
     theme: Theme;
@@ -13,17 +15,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { user } = useAuth();
     // Default to student-blue, but prefer user's saved theme if available
-    const [theme, setThemeState] = useState<Theme>('student-blue');
-
-    useEffect(() => {
-        if (user?.theme) {
-            // Validate that the theme from DB is one of our valid themes
-            const validThemes: Theme[] = ['student-blue', 'teacher-black', 'profile-white', 'lilac-premium'];
-            if (validThemes.includes(user.theme as Theme)) {
-                setThemeState(user.theme as Theme);
-            }
+    const initialTheme = useMemo(() => {
+        if (user?.theme && validThemes.includes(user.theme as Theme)) {
+            return user.theme as Theme;
         }
+        return 'student-blue';
     }, [user]);
+
+    const [theme, setThemeState] = useState<Theme>(initialTheme);
 
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
@@ -46,8 +45,6 @@ function getThemeClasses(theme: Theme): string {
     switch (theme) {
         case 'teacher-black':
             return 'theme-teacher-black';
-        case 'profile-white':
-            return 'theme-profile-white';
         case 'lilac-premium':
             return 'theme-lilac-premium';
         default:

@@ -10,6 +10,9 @@ export default defineConfig({
     tailwindcss(),
     visualizer({ filename: 'dist/stats.html', open: true })
   ],
+  server: {
+    host: true
+  },
   build: {
     rollupOptions: {
       output: {

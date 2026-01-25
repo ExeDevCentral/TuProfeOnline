@@ -37,10 +37,12 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 const classRoutes = require('./routes/classes');
 const courseRoutes = require('./routes/courses');
+const flashcardRoutes = require('./routes/flashcards');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/classes', classRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/flashcards', flashcardRoutes);
 
 // Health check with caching
 app.get('/api/health', async (req, res) => {
@@ -85,10 +87,14 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  logger.info('Server started', { port: PORT });
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Auth routes: http://localhost:${PORT}/api/auth`);
-  console.log(`📚 Class routes: http://localhost:${PORT}/api/classes`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, '0.0.0.0', () => {
+    logger.info('Server started', { port: PORT });
+    console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+    console.log(`📡 Health check: http://0.0.0.0:${PORT}/api/health`);
+    console.log(`🔐 Auth routes: http://0.0.0.0:${PORT}/api/auth`);
+    console.log(`📚 Class routes: http://0.0.0.0:${PORT}/api/classes`);
+  });
+}
+
+module.exports = app;

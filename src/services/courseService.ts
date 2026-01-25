@@ -31,7 +31,7 @@ export const courseService = {
     },
 
     // Get course details
-    async getCourseDetails(id: string): Promise<any> {
+    async getCourseDetails(id: string): Promise<unknown> {
         const response = await api.get(`/courses/${id}`);
         return response.data;
     },

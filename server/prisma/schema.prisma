@@ -21,6 +21,7 @@ model User {
   timezone  String   @default("UTC")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? // Soft delete
 
   // Relaciones
   classesAsStudent ClassEnrollment[]
@@ -28,9 +29,16 @@ model User {
   sentMessages     Message[] @relation("Sender")
   receivedMessages Message[] @relation("Receiver")
   notifications    Notification[]
+  coursesAsTeacher Course[]
+  courseEnrollments CourseEnrollment[]
+  lessonProgresses LessonProgress[]
+  flashcardDecks FlashcardDeck[]
+  flashcardReviews FlashcardReview[]
 
   @@index([email])
   @@index([role])
+  @@index([createdAt]) // Para queries de usuarios recientes
+  @@index([deletedAt]) // Para filtrar soft deletes
 }
 
 model Class {
@@ -46,12 +54,15 @@ model Class {
   room        String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime? // Soft delete
 
   enrollments ClassEnrollment[]
 
   @@index([teacherId])
   @@index([startTime])
   @@index([status])
+  @@index([endTime]) // Para queries de clases activas
+  @@index([deletedAt])
 }
 
 model ClassEnrollment {
@@ -88,12 +99,14 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   message   String
-  type      String   @default("info") // info, warning, error, success
+  type      String   @default("INFO") // INFO, WARNING, ERROR, SUCCESS
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([read])
+  @@index([type]) // Para filtrar por tipo
+  @@index([createdAt]) // Para ordenar recientes
 }
 
 // Modelos para Cursos (Tipo Udemy)
@@ -103,19 +116,24 @@ model Course {
   description String?
   thumbnail   String?  // URL de la imagen de portada
   price       Float    @default(0)
-  isPublished Boolean  @default(false)
+  status      String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
   
   teacherId   String
   teacher     User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   
   sections    Section[]
   enrollments CourseEnrollment[]
+  flashcardDecks FlashcardDeck[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? // Soft delete
 
   @@index([teacherId])
-  @@index([isPublished])
+  @@index([status])
+  @@index([price]) // Para filtrar por precio
+  @@index([createdAt])
+  @@index([deletedAt])
 }
 
 model Section {
@@ -132,6 +150,7 @@ model Section {
   updatedAt DateTime @updatedAt
 
   @@index([courseId])
+  @@index([courseId, order]) // Para ordenar secciones dentro de un curso
 }
 
 model Lesson {
@@ -152,6 +171,8 @@ model Lesson {
   updatedAt   DateTime @updatedAt
 
   @@index([sectionId])
+  @@index([sectionId, order]) // Para ordenar lecciones dentro de una sección
+  @@index([isFree]) // Para filtrar previews gratuitos
 }
 
 model CourseEnrollment {
@@ -189,4 +210,71 @@ model LessonProgress {
   @@unique([studentId, lessonId])
   @@index([studentId])
   @@index([lessonId])
+}
+
+// Modelos para Flashcards
+model FlashcardDeck {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  isPublic    Boolean  @default(false)
+  color       String   @default("#3b82f6") // Color del deck
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  courseId    String?
+  course      Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  
+  cards       Flashcard[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? // Soft delete
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([isPublic])
+  @@index([createdAt])
+  @@index([deletedAt])
+}
+
+model Flashcard {
+  id        String   @id @default(cuid())
+  front     String   // Texto/pregunta del frente
+  back      String   // Texto/respuesta del reverso
+  order     Int      @default(0)
+  
+  deckId    String
+  deck      FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  
+  reviews   FlashcardReview[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deckId])
+  @@index([deckId, order])
+}
+
+model FlashcardReview {
+  id            String   @id @default(cuid())
+  cardId        String
+  card          Flashcard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  easeFactor    Float    @default(2.5) // Factor de facilidad (spaced repetition)
+  interval      Int      @default(1)   // Intervalo en días
+  repetitions   Int      @default(0)   // Número de repeticiones
+  nextReview    DateTime @default(now())
+  
+  quality       Int      // Calidad de la respuesta (0-5)
+  reviewedAt    DateTime @default(now())
+
+  @@unique([cardId, userId])
+  @@index([userId])
+  @@index([nextReview])
+  @@index([reviewedAt])
 }
