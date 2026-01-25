@@ -1,0 +1,24 @@
+"Actúa como un Desarrollador Full Stack Senior experto en Arquitectura Segura. Tu tarea es construir desde cero 'EduStream', una plataforma LMS (Learning Management System) de diseño premium.
+
+Stack Tecnológico Obligatorio:
+
+Frontend: React (Vite) + TypeScript + TailwindCSS (v4) + Framer Motion (para animaciones fluidas) + React Router v7.
+Backend: Node.js + Express + Prisma ORM (SQLite local).
+Seguridad: JWT para Autenticación, BCrypt para contraseñas, Helmet y Express-Rate-Limit para protección del servidor, Express-Validator para sanitización de inputs.
+Requerimientos Funcionales:
+
+Landing Page: Diseño moderno 'Dark Mode' con efectos de cristal (glassmorphism), hero section animado y listado de cursos públicos.
+Sistema de Autenticación: Login/Registro con soporte (mock) para Google OAuth. Roles definidos: STUDENT, TEACHER, ADMIN.
+Dashboard del Estudiante: Ruta protegida donde vean sus cursos inscritos y progreso.
+Reproductor de Clases: Interfaz para ver video-lecciones y unirse a clases en vivo (links a Google Meet).
+Gestión de Datos: Script de 'Seed' para poblar la base de datos con usuarios de prueba (Admin, Profesor, Alumno) y cursos ficticios.
+Requerimientos No Funcionales (Críticos):
+
+Arquitectura Robusta: El backend debe usar el patrón Controller-Service o Rutas limpias, evitando 'memory leaks' con Prisma (Singleton Pattern).
+DevOps Local: Debes generar un script unificado (
+.bat
+ para Windows) que instale dependencias frontend/backend, configure la base de datos y lance ambos servidores con un solo doble clic, manejando errores automáticamente.
+Estética: No uses estilos por defecto. Quiero una interfaz que parezca un producto SaaS de $1000/mes.
+Entrégame el código completo, estructura de carpetas y el script 
+EJECUTAR_PROYECTO.bat
+ final."
