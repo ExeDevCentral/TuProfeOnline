@@ -1,342 +1,341 @@
-# 🌟 WebClasesOnlineAmerica - Plataforma Educativa Premium
+# 🎓 Tu Profe Online
 
-[![Deployment](https://img.shields.io/badge/Deployment-Vercel-black?logo=vercel)](https://vercel.com)
-[![Language](https://img.shields.io/badge/Language-TypeScript-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Framework](https://img.shields.io/badge/Framework-React_19-61DAFB?logo=react)](https://reactjs.org/)
-[![Styling](https://img.shields.io/badge/Styling-Tailwind_CSS_v4-06B6D4?logo=tailwind-css)](https://tailwindcss.com/)
-[![Database](https://img.shields.io/badge/Database-Prisma_SQLite-2D3748?logo=prisma)](https://prisma.io/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+**Plataforma de clases en vivo con Google Meet** - Conecta con tus estudiantes de forma profesional y segura.
 
-> Una plataforma educativa moderna y elegante para estudiantes, profesores y administradores. Construida con las últimas tecnologías para una experiencia de aprendizaje excepcional.
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ---
 
-## ✨ Características Destacadas
+## 📋 Descripción
 
-### 🎨 Diseño y UX
-- **Interfaz Premium**: Glassmorphism con efectos visuales avanzados
-- **Animaciones Fluidas**: Framer Motion para transiciones suaves
-- **Responsive Design**: Optimizado para desktop, tablet y móvil
-- **Temas Personalizables**: Modo estudiante, profesor y premium
+**Tu Profe Online** es una plataforma web moderna diseñada para facilitar la gestión y realización de clases en vivo utilizando Google Meet. Permite a profesores y estudiantes conectarse de manera segura, programar clases, y gestionar sesiones educativas con una interfaz intuitiva y profesional.
 
-### 🔐 Seguridad y Autenticación
-- **JWT Authentication**: Sistema seguro de tokens
-- **Roles y Permisos**: Estudiante, Profesor, Administrador
-- **Validación Robusta**: Protección contra inyección y ataques comunes
-- **CORS Configurado**: Seguridad en producción
+### ✨ Características Principales
 
-### 📚 Funcionalidades Educativas
-- **Gestión de Cursos**: Crear y administrar contenido educativo
-- **Flashcards Interactivas**: Sistema de tarjetas de memoria
-- **Dashboard Personalizado**: Vista adaptada por rol
-- **Progreso del Estudiante**: Seguimiento de aprendizaje
-
-### 🚀 Tecnologías Modernas
-- **Frontend**: React 19 + TypeScript + Vite
-- **Backend**: Node.js + Express.js
-- **Base de Datos**: SQLite con Prisma ORM
-- **Despliegue**: Vercel con serverless functions
+- 🔐 **Autenticación Segura**: Login con Google OAuth 2.0 y sistema de registro tradicional
+- 📅 **Gestión de Clases**: Crea, programa y administra clases en vivo
+- 🎥 **Integración con Google Meet**: Genera y accede a enlaces de videollamadas automáticamente
+- 👥 **Roles de Usuario**: Sistema diferenciado para profesores y estudiantes
+- 📊 **Dashboard Intuitivo**: Panel de control con vista de clases programadas y próximas
+- 🎨 **Diseño Moderno**: Interfaz responsive con animaciones fluidas
+- 🔔 **Notificaciones**: Sistema de alertas para clases próximas
+- 🌐 **Multiidioma**: Soporte para español (expandible a otros idiomas)
 
 ---
 
-## 📦 Instalación y Configuración
-
-### Prerrequisitos
-- **Node.js** 18+ ([Descargar](https://nodejs.org/))
-- **npm** o **yarn**
-- **Git** ([Descargar](https://git-scm.com/))
-
-### 🚀 Inicio Rápido
-
-1. **Clonar el repositorio**
-   ```bash
-   git clone https://github.com/ExeDevCentral/WebClasesOnlineAmerica.git
-   cd WebClasesOnlineAmerica
-   ```
-
-2. **Instalar dependencias**
-   ```bash
-   # Frontend
-   npm install
-
-   # Backend
-   cd server
-   npm install
-   cd ..
-   ```
-
-3. **Configurar entorno**
-   
-   **Archivo `.env` (raíz del proyecto):**
-   ```env
-   VITE_API_URL=http://localhost:3001/api
-   VITE_GOOGLE_CLIENT_ID=tu_google_client_id
-   ```
-
-   **Archivo `server/.env`:**
-   ```env
-   PORT=3001
-   NODE_ENV=development
-   JWT_SECRET=tu_clave_jwt_super_segura_min_32_caracteres
-   DATABASE_URL=file:./dev.db
-   FRONTEND_URL=http://localhost:5173
-   GOOGLE_CLIENT_ID=tu_google_client_id
-   GOOGLE_CLIENT_SECRET=tu_google_client_secret
-   ```
-
-4. **Configurar base de datos**
-   ```bash
-   cd server
-   npx prisma generate
-   npx prisma migrate dev --name init
-   npm run seed
-   cd ..
-   ```
-
-5. **Iniciar desarrollo**
-   ```bash
-   # Terminal 1 - Backend
-   cd server && npm run dev
-
-   # Terminal 2 - Frontend
-   npm run dev
-   ```
-
-6. **Acceder**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3001/api
-
----
-
-## 🌐 Despliegue en Producción
-
-### Vercel (Recomendado)
-
-1. **Conectar GitHub a Vercel**
-   - Importa el repositorio en [vercel.com](https://vercel.com)
-   - Vercel detectará automáticamente la configuración
-
-2. **Variables de Entorno en Vercel**
-   ```
-   VITE_API_URL=https://tu-dominio.vercel.app/api
-   JWT_SECRET=clave_produccion_segura
-   DATABASE_URL=url_postgresql_produccion
-   FRONTEND_URL=https://tu-dominio.vercel.app
-   NODE_ENV=production
-   ```
-
-3. **Despliegue Automático**
-   - Cada push a `main` activa un despliegue
-   - Preview deployments para pull requests
-
-### Configuración de Base de Datos en Producción
-
-Para producción, recomendamos:
-- **Vercel Postgres**: Integración nativa con Vercel
-- **PlanetScale**: MySQL serverless
-- **Supabase**: PostgreSQL con API REST
-
-Ejemplo con Vercel Postgres:
-```env
-DATABASE_URL=postgresql://username:password@host:port/database
-```
-
----
-
-## 📁 Arquitectura del Proyecto
-
-```
-WebClasesOnlineAmerica/
-├── 📁 api/                    # Serverless functions (Vercel)
-│   └── index.js
-├── 📁 server/                 # Backend Node.js
-│   ├── 📁 src/
-│   │   ├── index.js          # Servidor Express
-│   │   ├── 📁 routes/        # Rutas API
-│   │   ├── 📁 middleware/    # Middlewares
-│   │   ├── 📁 utils/         # Utilidades
-│   │   └── 📁 config/        # Configuración
-│   ├── 📁 prisma/            # Schema y migraciones
-│   └── package.json
-├── 📁 src/                    # Frontend React
-│   ├── 📁 components/        # Componentes reutilizables
-│   ├── 📁 pages/            # Páginas de la aplicación
-│   ├── 📁 services/         # Servicios API
-│   ├── 📁 contexts/         # Contextos React
-│   ├── 📁 types/            # Definiciones TypeScript
-│   └── 📁 utils/            # Utilidades frontend
-├── 📁 public/                # Assets estáticos
-├── 📄 vercel.json            # Configuración Vercel
-├── 📄 package.json           # Dependencias frontend
-└── 📄 README.md
-```
-
----
-
-## 🔧 Scripts Disponibles
+## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
-```bash
-npm run dev          # Servidor desarrollo
-npm run build        # Build producción
-npm run preview      # Preview build local
-npm run lint         # Ejecutar linter
-npm run test         # Ejecutar tests (si existen)
-```
+- **React 19** - Biblioteca de UI
+- **TypeScript** - Tipado estático
+- **Vite** - Build tool y dev server
+- **Tailwind CSS 4** - Framework de estilos
+- **Framer Motion** - Animaciones
+- **React Router DOM** - Navegación
+- **Axios** - Cliente HTTP
+- **Lucide React** - Iconos
+- **Google OAuth** - Autenticación
 
 ### Backend
+- **Node.js** - Runtime de JavaScript
+- **Express 5** - Framework web
+- **Prisma** - ORM para base de datos
+- **PostgreSQL/SQLite** - Base de datos
+- **JWT** - Autenticación basada en tokens
+- **bcryptjs** - Encriptación de contraseñas
+- **Google Auth Library** - Verificación de tokens de Google
+- **Helmet** - Seguridad HTTP
+- **CORS** - Control de acceso
+- **Express Rate Limit** - Limitación de peticiones
+- **Winston** - Logging
+
+### DevOps & Tools
+- **ESLint** - Linter de código
+- **Jest** - Testing
+- **Cypress** - Testing E2E
+- **Vercel** - Deployment (frontend)
+- **GitHub Actions** - CI/CD
+
+---
+
+## 📦 Instalación
+
+### Prerrequisitos
+
+- Node.js 18+ y npm
+- Git
+- Cuenta de Google Cloud Platform (para OAuth)
+- PostgreSQL (opcional, puede usar SQLite para desarrollo)
+
+### 1. Clonar el Repositorio
+
 ```bash
-cd server
-npm run dev          # Desarrollo con nodemon
-npm start            # Producción
-npm test             # Ejecutar tests
-npm run seed         # Poblar base de datos
+git clone https://github.com/ExeDevCentral/TuProfeOnline.git
+cd TuProfeOnline
 ```
 
-### Base de Datos
+### 2. Instalar Dependencias
+
+#### Frontend
+```bash
+npm install
+```
+
+#### Backend
 ```bash
 cd server
-npx prisma studio    # Interfaz gráfica DB
-npx prisma generate  # Generar cliente Prisma
-npx prisma migrate dev # Crear migración desarrollo
+npm install
+cd ..
 ```
+
+### 3. Configurar Variables de Entorno
+
+#### Frontend - `.env`
+```env
+VITE_API_URL=http://localhost:3000/api
+VITE_GOOGLE_CLIENT_ID=tu_google_client_id_aqui
+```
+
+#### Backend - `server/.env`
+```env
+# Database
+DATABASE_URL="file:./prisma/dev.db"
+
+# JWT
+JWT_SECRET=tu_jwt_secret_super_seguro_aqui
+
+# Google OAuth
+GOOGLE_CLIENT_ID=tu_google_client_id_aqui
+GOOGLE_CLIENT_SECRET=tu_google_client_secret_aqui
+
+# Server
+PORT=3000
+NODE_ENV=development
+
+# CORS
+FRONTEND_URL=http://localhost:5173
+```
+
+### 4. Configurar Base de Datos
+
+```bash
+cd server
+npx prisma generate
+npx prisma migrate dev --name init
+npx prisma db seed
+cd ..
+```
+
+### 5. Iniciar el Proyecto
+
+#### Opción A: Iniciar Frontend y Backend por separado
+
+**Terminal 1 - Backend:**
+```bash
+cd server
+npm run dev
+```
+
+**Terminal 2 - Frontend:**
+```bash
+npm run dev
+```
+
+#### Opción B: Script personalizado (si existe)
+```bash
+npm start
+```
+
+La aplicación estará disponible en:
+- **Frontend**: http://localhost:5173
+- **Backend**: http://localhost:3000
+
+---
+
+## 🔑 Configuración de Google OAuth
+
+1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
+2. Crea un nuevo proyecto o selecciona uno existente
+3. Habilita la API de Google+ y Google Calendar
+4. Ve a "Credenciales" → "Crear credenciales" → "ID de cliente de OAuth 2.0"
+5. Configura la pantalla de consentimiento
+6. Agrega los orígenes autorizados:
+   - `http://localhost:5173` (desarrollo)
+   - Tu dominio de producción
+7. Agrega los URIs de redirección autorizados:
+   - `http://localhost:5173` (desarrollo)
+   - Tu dominio de producción
+8. Copia el Client ID y Client Secret a tus archivos `.env`
+
+---
+
+## 📖 Uso
+
+### Para Profesores
+
+1. **Registro/Login**: Crea una cuenta o inicia sesión con Google
+2. **Crear Clase**: Desde el dashboard, haz clic en "Nueva Clase"
+3. **Programar Sesión**: Define título, descripción, fecha y hora
+4. **Compartir Enlace**: El sistema genera automáticamente un enlace de Google Meet
+5. **Gestionar Estudiantes**: Visualiza quiénes se han unido a tus clases
+
+### Para Estudiantes
+
+1. **Registro/Login**: Crea una cuenta o inicia sesión con Google
+2. **Explorar Clases**: Navega por las clases disponibles
+3. **Unirse a Clase**: Inscríbete en las clases de tu interés
+4. **Acceder a Sesiones**: Únete a las videollamadas desde el dashboard
+
+---
+
+## 🗂️ Estructura del Proyecto
+
+```
+TuProfeOnline/
+├── src/                          # Frontend source
+│   ├── components/               # Componentes React
+│   │   ├── LoginModal.tsx
+│   │   ├── RegisterModal.tsx
+│   │   └── VideoBackground.tsx
+│   ├── contexts/                 # Contextos de React
+│   │   └── AuthContext.tsx
+│   ├── pages/                    # Páginas principales
+│   │   ├── LandingPage.tsx
+│   │   └── Dashboard.tsx
+│   ├── services/                 # Servicios API
+│   │   ├── api.ts
+│   │   ├── authService.ts
+│   │   └── classService.ts
+│   ├── utils/                    # Utilidades
+│   │   └── googleApi.ts
+│   ├── App.tsx                   # Componente principal
+│   ├── main.tsx                  # Entry point
+│   └── index.css                 # Estilos globales
+├── server/                       # Backend source
+│   ├── prisma/                   # Esquema y migraciones
+│   │   └── schema.prisma
+│   ├── src/
+│   │   ├── config/               # Configuración
+│   │   │   └── database.js
+│   │   ├── middleware/           # Middlewares
+│   │   │   └── auth.js
+│   │   ├── routes/               # Rutas API
+│   │   │   ├── auth.js
+│   │   │   └── classes.js
+│   │   ├── index.js              # Server entry point
+│   │   └── seed.js               # Database seeding
+│   └── package.json
+├── public/                       # Assets estáticos
+├── docs/                         # Documentación adicional
+├── package.json                  # Dependencias frontend
+├── vite.config.ts                # Configuración Vite
+├── tsconfig.json                 # Configuración TypeScript
+└── README.md                     # Este archivo
+```
+
+---
+
+## 🔌 API Endpoints
+
+### Autenticación
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Registrar nuevo usuario |
+| POST | `/api/auth/login` | Iniciar sesión |
+| POST | `/api/auth/google` | Autenticación con Google |
+| GET | `/api/auth/me` | Obtener usuario actual |
+
+### Clases
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/classes` | Listar todas las clases |
+| POST | `/api/classes` | Crear nueva clase |
+| GET | `/api/classes/:id` | Obtener clase específica |
+| PUT | `/api/classes/:id` | Actualizar clase |
+| DELETE | `/api/classes/:id` | Eliminar clase |
+| POST | `/api/classes/:id/join` | Unirse a una clase |
+
+---
+
+## 🚀 Deployment
+
+### Frontend (Vercel)
+
+1. Conecta tu repositorio a Vercel
+2. Configura las variables de entorno en Vercel
+3. Deploy automático en cada push a `main`
+
+### Backend (Railway/Render/Heroku)
+
+1. Configura las variables de entorno en tu plataforma
+2. Asegúrate de configurar PostgreSQL en producción
+3. Ejecuta las migraciones de Prisma
 
 ---
 
 ## 🧪 Testing
 
-### Backend Tests
 ```bash
-cd server
-npm test  # Ejecuta tests con Jest
-```
+# Unit tests
+npm test
 
-### Credenciales de Prueba
-- **Admin**: admin@edustream.com / admin123
-- **Profesor**: prof.garcia@edustream.com / teacher123
-- **Estudiante**: estudiante1@edustream.com / student123
+# Watch mode
+npm run test:watch
 
----
+# E2E tests
+npm run test:e2e
 
-## 📡 API Documentation
-
-### Autenticación
-```
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
-POST /api/auth/google
-```
-
-### Cursos
-```
-GET    /api/classes
-POST   /api/classes
-GET    /api/classes/:id
-PUT    /api/classes/:id
-DELETE /api/classes/:id
-```
-
-### Flashcards
-```
-GET    /api/flashcards/decks
-POST   /api/flashcards/decks
-GET    /api/flashcards/decks/:id
-PUT    /api/flashcards/decks/:id
-DELETE /api/flashcards/decks/:id
-GET    /api/flashcards/decks/:id/cards
-POST   /api/flashcards/decks/:id/cards
-```
-
-### Health Check
-```
-GET /api/health
-```
-
----
-
-## 🔒 Seguridad
-
-- **Hashing de Contraseñas**: bcrypt con salt rounds
-- **JWT Tokens**: Expiración configurable
-- **Input Validation**: express-validator en todas las rutas
-- **Rate Limiting**: Protección contra abuso
-- **Helmet**: Headers de seguridad HTTP
-- **CORS**: Configurado para orígenes específicos
-
----
-
-## 🎨 Personalización
-
-### Temas
-La aplicación incluye 3 temas predefinidos:
-- **Estudiante Azul**: Tema por defecto
-- **Profesor Negro**: Tema premium con acentos dorados
-- **Lila Premium**: Tema elegante con tonos púrpura
-
-### Variables CSS
-Personaliza colores en `src/index.css`:
-```css
-@theme {
-  --color-primary-500: #tu-color;
-  --bg-app: #tu-fondo;
-}
+# E2E tests (interactive)
+npm run test:e2e:open
 ```
 
 ---
 
 ## 🤝 Contribuir
 
-¡Las contribuciones son bienvenidas! 
+Las contribuciones son bienvenidas. Por favor:
 
-### Proceso
 1. Fork el proyecto
-2. Crea una rama feature (`git checkout -b feature/AmazingFeature`)
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-### Guías de Código
-- Usa TypeScript para type safety
-- Sigue ESLint configuration
-- Escribe tests para nuevas funcionalidades
-- Actualiza documentación
+Ver [CONTRIBUTING.md](CONTRIBUTING.md) para más detalles.
 
 ---
 
 ## 📄 Licencia
 
-Distribuido bajo la **Licencia MIT**. Ver `LICENSE` para más información.
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ---
 
-## 👨‍💻 Autor
+## 👥 Autores
 
-**ExeDevCentral**
-- 🌐 Website: [tu-sitio-web]
-- 📧 Email: tu-email@ejemplo.com
-- 🐙 GitHub: [@ExeDevCentral](https://github.com/ExeDevCentral)
-- 💼 LinkedIn: [tu-linkedin]
+- **ExeDevCentral** - [GitHub](https://github.com/ExeDevCentral)
 
 ---
 
 ## 🙏 Agradecimientos
 
-- **React Team** - Por el mejor framework frontend
-- **Vercel** - Por la mejor plataforma de despliegue
-- **Tailwind CSS** - Por el sistema de diseño utilitario
-- **Prisma** - Por el mejor ORM para TypeScript
-- **Framer Motion** - Por las animaciones fluidas
+- Google por las APIs de OAuth y Meet
+- La comunidad de React y Node.js
+- Todos los contribuidores del proyecto
 
 ---
 
 ## 📞 Soporte
 
-Si tienes preguntas o problemas:
-- Abre un [Issue](https://github.com/ExeDevCentral/WebClasesOnlineAmerica/issues)
-- Revisa la [Documentación](https://github.com/ExeDevCentral/WebClasesOnlineAmerica/wiki)
-- Contacta al maintainer
+Si tienes preguntas o necesitas ayuda:
+
+- 📧 Email: [Agregar email de soporte]
+- 🐛 Issues: [GitHub Issues](https://github.com/ExeDevCentral/TuProfeOnline/issues)
+- 📖 Documentación: [Wiki del proyecto](https://github.com/ExeDevCentral/TuProfeOnline/wiki)
 
 ---
 
-*⭐ Si te gusta el proyecto, dale una estrella en GitHub!*"
+**¡Hecho con ❤️ para la educación online!**

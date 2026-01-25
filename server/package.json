@@ -1,7 +1,7 @@
 {
-  "name": "edustream-server",
+  "name": "tu-profe-online-server",
   "version": "1.0.0",
-  "description": "Backend server for EduStream",
+  "description": "Backend server for Tu Profe Online",
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
