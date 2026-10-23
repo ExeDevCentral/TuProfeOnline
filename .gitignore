@@ -25,5 +25,11 @@ dist-ssr
 
 # Environment
 .env
-.env.production
-.env.local
+.env.*
+!.env.example
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+
