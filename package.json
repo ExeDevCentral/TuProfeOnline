@@ -49,5 +49,11 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ExeDevCentral/TuProfeOnline.git"
+  },
+  "homepage": "https://github.com/ExeDevCentral/TuProfeOnline",
+  "license": "MIT"
 }

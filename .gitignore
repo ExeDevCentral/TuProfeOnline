@@ -33,3 +33,7 @@ dist-ssr
 *.db-journal
 *.sqlite
 
+
+# Local environment and build artifacts
+coverage/
+.vercel/
